@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const heartsContainer = document.getElementById('hearts-container');
-    const numHearts = 30;
+    const envelope = document.getElementById('envelope');
+    const letter = document.querySelector('.letter');
+    const numHearts = 10;
 
     setInterval(createHearts, 2000);
 
@@ -33,9 +35,37 @@ document.addEventListener('DOMContentLoaded', function () {
         element.style.left = randomLeft + 'px';
         element.style.top = randomTop + 'px';
     }
+
     // Open envelope on click
     envelope.addEventListener('click', function () {
         envelope.classList.add('open');
         letter.style.display = 'block';
+    });
+
+    function animateHeart() {
+        TweenMax.from($(".heart"), 1, {
+            scaleX: 1.2,
+            scaleY: 1.2,
+            transformOrigin: "50% 50%",
+            ease: Elastic.easeOut.config(1, 0.3)
+        });
+        TweenMax.to($(".heart"), 1, {
+            scaleX: 1,
+            scaleY: 1,
+            ease: Elastic.easeOut.config(1, 0.3),
+            onComplete: function () {
+                setTimeout(animateHeart, 200);
+            }
+        });
+    }
+
+    new Vivus('message', { type: "oneByOne", duration: 1200 }, function () {
+        TweenMax.to($("path"), 5, { fillOpacity: 1, onComplete: function () {
+            animateHeart();
+        } });
+    });
+
+    $(function () {
+        TweenMax.to("body", 20, { backgroundPositionY: -100, repeat: -1, ease: Power0.easeNone });
     });
 });
